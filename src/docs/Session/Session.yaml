@@ -1,0 +1,273 @@
+paths:
+  /api/session/signin:
+    post:
+      summary: Iniciar sesión
+      tags:
+        - Session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Dirección de correo electrónico del usuario
+                password:
+                  type: string
+                  description: Contraseña del usuario
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: Sesión iniciada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token de autenticación
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        "401":
+          description: Usuario inválido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: Usuario inválido
+        "500":
+          description: Error al iniciar sesión
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: Error al iniciar sesión
+  /api/session/signup:
+    post:
+      summary: Registrar nuevo usuario
+      tags:
+        - Session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: Nombre del usuario
+                last_name:
+                  type: string
+                  description: Apellido del usuario
+                age:
+                  type: number
+                  description: Edad del usuario
+                email:
+                  type: string
+                  description: Dirección de correo electrónico del usuario
+                password:
+                  type: string
+                  description: Contraseña del usuario
+              required:
+                - first_name
+                - last_name
+                - age
+                - email
+                - password
+      responses:
+        "201":
+          description: Usuario registrado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    description: Mensaje de éxito
+                    example: Usuario registrado
+        "400":
+          description: Usuario ya existente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: Usuario ya existente
+        "500":
+          description: Error al registrar usuario
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: Error al registrar usuario
+  /api/session/logout:
+    get:
+      summary: Cerrar sesión de usuario
+      tags:
+        - Session
+      responses:
+        "200":
+          description: Usuario deslogueado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultado:
+                    type: string
+                    description: Resultado de la operación
+                    example: Usuario deslogueado
+  /api/session/github:
+    get:
+      summary: Iniciar sesión con GitHub
+      tags:
+        - Session
+      responses:
+        "200":
+          description: Usuario registrado con éxito a través de GitHub
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    description: Mensaje de éxito
+                    example: Usuario registrado
+  /api/session/githubCallback:
+    get:
+      summary: Callback de GitHub para la sesión
+      tags:
+        - Session
+      responses:
+        "200":
+          description: Usuario logueado exitosamente con GitHub
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    description: Mensaje de éxito
+                    example: Usuario logueado
+  /api/session/testJWT:
+    get:
+      summary: Prueba de JWT durante la sesión
+      tags:
+        - Session
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Prueba de JWT exitosa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/users"
+        "401":
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: No autorizado
+  /api/session/current:
+    get:
+      summary: Obtener información del usuario actual
+      tags:
+        - Session
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Información del usuario obtenida correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/users"
+        "401":
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: No autorizado
+        "403":
+          description: Acceso prohibido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: Acceso prohibido
+components:
+  schemas:
+    users:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: ID autogenerado por MongoDb
+        first_name:
+          type: string
+          description: Nombre del usuario
+        last_name:
+          type: string
+          description: Apellido del usuario
+        age:
+          type: number
+          description: Edad del usuario
+        email:
+          type: string
+          description: Email del usuario
+        password:
+          type: string
+          description: Contraseña del usuario
+        rol:
+          type: string
+          description: Rol del usuario
+        cart:
+          type: string
+          description: ID del carrito asociado al usuario
+      example:
+        _id: ObjectId('656a3c7897ba3afb939761b8')
+        first_name: Ana
+        last_name: Rodriguez
+        age: 25
+        email: ana@ana.com
+        password: Ana123456
+        rol: user
+        cart: 656a3c7897ba3afb939761b9

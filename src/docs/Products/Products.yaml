@@ -1,0 +1,338 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtener todos los productos
+      tags:
+        - Products
+      parameters:
+        - name: category
+          in: query
+          description: Categoría del producto
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Estado del producto
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          description: Límite de productos por página
+          schema:
+            type: integer
+        - name: page
+          in: query
+          description: Número de página
+          schema:
+            type: integer
+        - name: sort
+          in: query
+          description: Orden de los resultados (asc o desc)
+          schema:
+            type: string
+            enum: ["asc", "desc"]
+      responses:
+        "200":
+          description: Productos obtenidos correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: OK
+                  mensaje:
+                    type: array
+                    description: Lista de productos
+                    items:
+                      $ref: "#/components/schemas/product"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Mensaje de error
+                    example: Error interno del servidor
+    post:
+      summary: Crear un nuevo producto
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/product"
+      responses:
+        "200":
+          description: Producto creado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: OK
+                  mensaje:
+                    $ref: "#/components/schemas/product"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: Error
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: Error en la solicitud
+  /api/products/{id}:
+    get:
+      summary: Obtener producto por ID
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del producto a obtener
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto obtenido correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: OK
+                  mensaje:
+                    $ref: "#/components/schemas/product"
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: Error
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: Producto no encontrado
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: Error
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: Error en la solicitud
+    delete:
+      summary: Eliminar un producto por su ID
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del producto a eliminar
+      responses:
+        "200":
+          description: Producto eliminado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: OK
+                  mensaje:
+                    type: string
+                    description: Mensaje de éxito
+                    example: Producto Borrado
+        "403":
+          description: No tienes permisos para borrar este producto o no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: Error
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: No tienes permisos para borrar este producto o no encontrado
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: Error
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: Error en la solicitud
+  /api/products/{productId}:
+    put:
+      summary: Actualizar un producto
+      tags:
+        - Products
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del producto a actualizar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/product"
+      responses:
+        "200":
+          description: Producto actualizado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: OK
+                  mensaje:
+                    $ref: "#/components/schemas/product"
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: Error
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: Error en la solicitud
+        "403":
+          description: No tienes permisos para editar este producto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: Error
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: No tienes permisos para editar este producto
+        "404":
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  respuesta:
+                    type: string
+                    description: Estado de la respuesta
+                    example: Error
+                  mensaje:
+                    type: string
+                    description: Mensaje de error
+                    example: Producto no encontrado
+components:
+  schemas:
+    product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: ID autogenerado por MongoDb
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: number
+          description: Stock del producto
+        category:
+          type: string
+          description: Categoria del producto
+        status:
+          type: boolean
+          description: Estado del producto
+        code:
+          type: string
+          description: Código delo producto
+        thumbnails:
+          type: array
+          description: Array con las url de las imagenes del producto
+        owner:
+          type: ObjectId
+          description: ID autogenerado por MongoDb correspondiente al usuario creador del producto
+      example:
+        _id: ObjectId('6577448afd9b34b5faec1fce')
+        title: Remera
+        description: Térmica con forro interior para mantener el calor en invierno
+        price: 250
+        stock: 100
+        category: t-shirt
+        status: true
+        code: ABR456XYZ
+        thumbnails:
+          - "https://firebasestorage.googleapis.com/v0/b/my-ecommerce-947aa.appspot.com/o/abrigos-01.jpg?alt=media&token=7db4e96f-3c18-49e8-b714-f37fbfff5c17"
+          - "https://firebasestorage.googleapis.com/v0/b/my-ecommerce-947aa.appspot.com/o/abrigos-02.jpg?alt=media&token=a806949d-b92a-4b17-b40a-3cc21530391b"
+        owner: ObjectId('6552af4c4a1eb20d431dab17')

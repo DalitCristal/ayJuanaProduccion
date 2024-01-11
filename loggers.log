@@ -1,0 +1,127 @@
+error: <span style='color:yellow'>Texto Error</span><br/>
+error: <span style='color:yellow'>Texto Error</span><br/>
+fatal: <span style='color:red'>Texto Fatal</span><br/>
+fatal: <span style='color:red'>Texto Fatal</span><br/>
+info: <span style='color:blue'>Texto Informativo</span><br/>
+warning: <span style='color:cyan'>Texto Warning</span><br/>
+warning: <span style='color:cyan'>Texto Warning</span><br/>
+info: Success: {"accepted":["dalacristal25@gmail.com"],"ehlo":["SIZE 35882577","8BITMIME","AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH","ENHANCEDSTATUSCODES","PIPELINING","CHUNKING","SMTPUTF8"],"envelope":{"from":"dalitcristal25@gmail.com","to":["dalacristal25@gmail.com"]},"envelopeTime":906,"messageId":"<298c271d-bd32-3202-a0e1-d952980646cd@gmail.com>","messageSize":686,"messageTime":1028,"rejected":[],"response":"250 2.0.0 OK  1704397500 t124-20020a628182000000b006d0a29ad0aasm41860pfd.5 - gsmtp"}
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
+info: Servidor conectado en Puerto 8080
+info: BDD is connected
