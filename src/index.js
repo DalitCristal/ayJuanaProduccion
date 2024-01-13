@@ -13,6 +13,7 @@ import MongoStore from "connect-mongo";
 import { addLogger, logger } from "./config/logger.js";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express";
+import cors from "cors";
 
 const swaggerOptions = {
   definition: {
@@ -26,6 +27,19 @@ const swaggerOptions = {
 };
 
 const specs = swaggerJsdoc(swaggerOptions);
+
+const whiteList = ["http://localhost:5173"];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whiteList.indexOf(origin) != -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Acceso denegado"));
+    }
+  },
+  credentials: true,
+};
 
 //INICIALIZACION
 const app = express();
@@ -45,6 +59,7 @@ const server = app.listen(PORT, () => {
 });
 
 //MIDLEWEARE
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser(process.env.SIGNED_COOKIE));
