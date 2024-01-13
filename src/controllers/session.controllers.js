@@ -17,7 +17,8 @@ sessionsCtrls.postLogin = async (req, res) => {
       maxAge: 43200000,
     });
 
-    res.status(200).send({ payload: req.user });
+    //res.status(200).send({ payload: req.user });
+    res.status(200).send({ token });
   } catch (error) {
     res.status(500).send({ mensaje: `Error al iniciar sesion ${error}` });
   }
