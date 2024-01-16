@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { Schema, model } from "mongoose";
 import { cartModel } from "./carts.models.js";
 import paginate from "mongoose-paginate-v2";
