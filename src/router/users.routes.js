@@ -7,7 +7,7 @@ import uploader from "../utils/uploader.js";
 const userRouter = Router();
 userRouter.use(addLogger);
 
-//Todos los usuarios
+// Todos los usuarios
 userRouter.get(
   "/api/users",
   passportError("jwt"),
@@ -15,7 +15,7 @@ userRouter.get(
   usersCtrls.getApiAllUsers
 );
 
-//Un usuario
+// Un usuario
 userRouter.get(
   "/api/users/:id",
   passportError("jwt"),
@@ -23,13 +23,13 @@ userRouter.get(
   usersCtrls.getUserById
 );
 
-//Crear un usuario
+// Crear un usuario
 userRouter.post("/api/users/mail", usersCtrls.postMail);
 
-//Restablecer contraseña de usuario
+// Restablecer contraseña de usuario
 userRouter.put(`/api/users/:userId`, usersCtrls.putPasswordUser);
 
-//Editar todos los campos del usuario
+// Editar todos los campos del usuario
 userRouter.put(
   `/api/users/profile/:userId`,
   passportError("jwt"),
@@ -37,7 +37,7 @@ userRouter.put(
   usersCtrls.putUser
 );
 
-//Edita rol de un usuario
+// Edita rol de un usuario
 userRouter.put(
   `/api/users/premium/:uid`,
   passportError("jwt"),
@@ -45,30 +45,38 @@ userRouter.put(
   usersCtrls.putRolUser
 );
 
-//validar email token
+// Validar email token
 userRouter.post(
   `/api/validate-reset-token/:userId`,
   usersCtrls.verifyEmailToken
 );
 
-//Elimina un usuario
+// Eliminar un usuario
 userRouter.delete(
   "/api/users/:userId",
   passportError("jwt"),
-  authorization(["admin", "premium", "user"]),
+  authorization(["premium", "user"]),
   usersCtrls.deleteUser
 );
 
-//Documentos del usuario
+// Admin elimina usuario/s
+userRouter.delete(
+  "/api/users",
+  passportError("jwt"),
+  authorization("admin"),
+  usersCtrls.deleteUsers
+);
+
+// Documentos del usuario
 userRouter.post(
   "/api/users/:uid/documents",
   passportError("jwt"),
   authorization(["admin", "premium", "user"]),
-  uploader.array("files", 5), // 'files' es el nombre del campo que contiene los archivos en el formulario
+  uploader.array("files", 5),
   usersCtrls.userDocument
 );
 
-//Profile img
+// Profile img
 userRouter.post(
   "/api/users/:uid/profile",
   passportError("jwt"),

@@ -5,31 +5,36 @@ import sessionsCtrls from "../controllers/session.controllers.js";
 
 const sessionRouter = Router();
 
-//Iniciar sesión
+// Iniciar sesión
 sessionRouter.post(
   "/api/session/signin",
   passport.authenticate("login"),
   sessionsCtrls.postLogin
 );
 
-//Registrarse
+// Registrarse
 sessionRouter.post(
   "/api/session/signup",
   passport.authenticate("register"),
   sessionsCtrls.postSignUp
 );
 
-//Cerrar sesión
-sessionRouter.get("/api/session/logout", sessionsCtrls.getLogOut);
+// Cerrar sesión
+sessionRouter.get(
+  "/api/session/logout",
+  passportError("jwt"),
+  authorization(["admin", "premium", "user"]),
+  sessionsCtrls.getLogOut
+);
 
-//Registrarse a través de github
+// Registrarse a través de github
 sessionRouter.post(
   "/api/session/github",
   passport.authenticate("github", { scope: [`user:email`] }),
   sessionsCtrls.getGithub
 );
 
-//Iniciar sesión a través de github
+// Iniciar sesión a través de github
 sessionRouter.get(
   "/api/session/githubCallback",
   passport.authenticate("github"),

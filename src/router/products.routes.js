@@ -7,16 +7,16 @@ import uploader from "../utils/uploader.js";
 const productRouter = Router();
 productRouter.use(addLogger);
 
-//Obtener todos los productos
+// Obtener todos los productos
 productRouter.get("/api/products", productCtrls.getProducts);
 
-//Obtener un producto
+// Obtener un producto
 productRouter.get("/api/products/:id", productCtrls.getProductById);
 
-//Obtener un producto por su nombre
+// Obtener un producto por su nombre
 productRouter.post("/api/products/search", productCtrls.getProductByName);
 
-//Crear nuevo producto
+// Crear nuevo producto
 productRouter.post(
   "/api/products",
   passportError("jwt"),
@@ -24,7 +24,7 @@ productRouter.post(
   productCtrls.postProduct
 );
 
-//Editar producto
+// Editar producto
 productRouter.put(
   "/api/products/:productId",
   passportError("jwt"),
@@ -32,7 +32,7 @@ productRouter.put(
   productCtrls.putProduct
 );
 
-//Eliminar producto
+// Eliminar producto
 productRouter.delete(
   "/api/products/:id",
   passportError("jwt"),
@@ -40,7 +40,7 @@ productRouter.delete(
   productCtrls.deleteProduct
 );
 
-//Subir imagen de producto
+// Subir imagen de producto
 productRouter.post(
   "/api/products/:productId/thumbnails",
   passportError("jwt"),

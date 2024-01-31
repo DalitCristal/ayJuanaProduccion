@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
@@ -13,7 +14,7 @@ import MongoStore from "connect-mongo";
 import { addLogger, logger } from "./config/logger.js";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express";
-import cors from "cors";
+import { PORT_BACK, PORT_FRONT, HOST } from "./config/config.js";
 
 const swaggerOptions = {
   definition: {
@@ -28,7 +29,7 @@ const swaggerOptions = {
 
 const specs = swaggerJsdoc(swaggerOptions);
 
-const whiteList = ["http://localhost:5173"];
+const whiteList = [`${HOST}${PORT_FRONT}`];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -43,7 +44,6 @@ const corsOptions = {
 
 //INICIALIZACION
 const app = express();
-const PORT = 8080;
 
 //BDD
 mongoose
@@ -54,8 +54,8 @@ mongoose
   .catch((error) => logger.error("Error en conexion a BDD", error));
 
 //SETTINGS
-const server = app.listen(PORT, () => {
-  logger.info(`Servidor conectado en Puerto ${PORT}`);
+const server = app.listen(PORT_BACK, () => {
+  logger.info(`Servidor conectado en Puerto ${PORT_BACK}`);
 });
 
 //MIDLEWEARE
@@ -82,18 +82,18 @@ app.use(
 app.use(addLogger);
 app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
-/* Passport */
+// Passport
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-//STATIC FILES
+// Static files
 app.use(
   "/static",
   express.static(path.join(dirname(fileURLToPath(import.meta.url)), "/public"))
 );
 
-//RUTAS
+// Rutas
 app.use("/", router);
 app.use((req, res) => {
   res.status(404).json({ status: false, errors: "Ruta no encontrada" });

@@ -1,6 +1,11 @@
 import { Schema, model } from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
+const thumbnailSchema = new Schema({
+  contentType: String,
+  name: String,
+});
+
 const productSchema = new Schema({
   title: {
     type: String,
@@ -33,7 +38,7 @@ const productSchema = new Schema({
     unique: true,
   },
   thumbnails: {
-    type: [String],
+    type: [thumbnailSchema],
     default: [],
   },
   owner: {

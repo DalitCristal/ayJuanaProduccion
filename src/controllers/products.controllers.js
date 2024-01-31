@@ -1,4 +1,8 @@
 import { productModel } from "../models/products.models.js";
+import nodemailer from "nodemailer";
+import "dotenv/config";
+import { userModel } from "../models/users.models.js";
+import { PORT_FRONT, HOST } from "../config/config.js";
 
 const productCtrls = {};
 
@@ -93,7 +97,7 @@ productCtrls.getProducts = async (req, res) => {
   }
 };
 
-// ------ Buscar producto por ID ------
+// Buscar producto por Id
 productCtrls.getProductById = async (req, res) => {
   const { id } = req.params;
 
@@ -114,13 +118,13 @@ productCtrls.getProductById = async (req, res) => {
   }
 };
 
-// ------ Buscar producto por nombre ------
+// Buscar producto por nombre
 productCtrls.getProductByName = async (req, res) => {
   const { productName } = req.body;
 
   try {
     const products = await productModel.find({
-      title: { $regex: new RegExp(productName, "i") }, // búsqueda insensible a mayúsculas y minúsculas
+      title: { $regex: new RegExp(productName, "i") }, // Búsqueda insensible a mayúsculas y minúsculas
     });
 
     if (products.length > 0) {
@@ -138,7 +142,7 @@ productCtrls.getProductByName = async (req, res) => {
   }
 };
 
-// ------ Crear un nuevo producto ------
+// Crear un nuevo producto
 productCtrls.postProduct = async (req, res) => {
   const {
     title,
@@ -154,6 +158,11 @@ productCtrls.postProduct = async (req, res) => {
   try {
     const userIdFromToken = req.user.user._id;
 
+    let thumbnailsData = thumbnails;
+    // Verificar si thumbnails está vacío
+    if (!thumbnailsData || thumbnailsData.length === 0) {
+      thumbnailsData = [{ name: "producto-sin-foto.jpg" }];
+    }
     const prod = await productModel.create({
       title,
       description,
@@ -162,7 +171,7 @@ productCtrls.postProduct = async (req, res) => {
       category,
       status,
       code,
-      thumbnails,
+      thumbnails: thumbnailsData,
       owner: userIdFromToken,
     });
     res.status(200).send({ respuesta: "OK", mensaje: prod });
@@ -173,7 +182,7 @@ productCtrls.postProduct = async (req, res) => {
   }
 };
 
-// ------ Actualizar un producto ------
+// Actualizar un producto
 productCtrls.putProduct = async (req, res) => {
   const { productId } = req.params;
   const {
@@ -188,7 +197,6 @@ productCtrls.putProduct = async (req, res) => {
   } = req.body;
 
   try {
-    // Verificar si el usuario premium tiene los permisos
     const existingProduct = await productModel.findById(productId);
     if (!existingProduct) {
       return res.status(404).send({
@@ -197,6 +205,7 @@ productCtrls.putProduct = async (req, res) => {
       });
     }
 
+    // Verificar si el usuario premium tiene los permisos
     if (
       req.user.user.rol === "premium" &&
       existingProduct.owner.toString() !== req.user.user._id
@@ -235,7 +244,7 @@ productCtrls.putProduct = async (req, res) => {
   }
 };
 
-// ------ Borrar un producto ------
+// Borrar un producto
 productCtrls.deleteProduct = async (req, res) => {
   const { id } = req.params;
   const userRole = req.user.user.rol;
@@ -243,7 +252,7 @@ productCtrls.deleteProduct = async (req, res) => {
 
   try {
     let deletedProduct;
-
+    let ownerEmail;
     // Verificar si el usuario premium tiene permisos
     const prod = await productModel.findOne({
       _id: id,
@@ -251,12 +260,64 @@ productCtrls.deleteProduct = async (req, res) => {
     });
 
     if (prod) {
+      // Premium solo puede borrar sus propios productos, no los de otro owners
       deletedProduct = await productModel.findByIdAndDelete(id);
+      if (deletedProduct) {
+        res.status(200).send({ respuesta: "OK", mensaje: "Producto Borrado" });
+      }
     } else if (userRole === "admin") {
-      deletedProduct = await productModel.findByIdAndDelete(id);
-    }
+      // Obtener el producto antes de eliminarlo
+      const productToDelete = await productModel.findById(id);
 
-    if (deletedProduct) {
+      if (!productToDelete) {
+        req.logger.error("producto no encontrado");
+      }
+      const ownerId = productToDelete.owner;
+      const ownerData = await userModel.findById(ownerId);
+      if (!ownerData) {
+        req.logger.error("Datos del propietario no encontrados");
+      }
+      ownerEmail = ownerData.email;
+
+      deletedProduct = await productModel.findByIdAndDelete(id);
+
+      if (deletedProduct) {
+        /* ENVIAR EMAIL */
+        const transporterEmail = nodemailer.createTransport({
+          host: "smtp.gmail.com",
+          port: 465,
+          secure: true,
+          auth: {
+            user: "dalitcristal25@gmail.com",
+            pass: process.env.CONTRASENA_NODEMAILER,
+            authMethod: "YOUR PRODUCT WAS DELETED",
+          },
+        });
+
+        const mailOptions = {
+          from: "Ay Juana",
+          to: ownerEmail,
+          subject: `Su producto ${productToDelete.title} ha sido eliminado`,
+          html: `
+        <div>
+          <h1>Su producto ha sido eliminado</h1>
+          <h2>Detalles del producto:</h2>
+          <p>Título: ${productToDelete.title}</p>
+          <p>Descripción: ${productToDelete.description}</p>
+          <p>Precio: ${productToDelete.price}</p>
+          <p>Stock: ${productToDelete.stock}</p>
+          <p>Categoría: ${productToDelete.category}</p>
+          <p>Código: ${productToDelete.code}</p>
+          <p>Haz click en el siguiente enlace para comunicarte con equipo de asesores.</p>
+          <a href='${HOST}${PORT_FRONT}/'>Quiero más información</a>
+        </div>
+      `,
+        };
+
+        await transporterEmail.sendMail(mailOptions);
+        req.logger.info("Success, email enviado con éxito");
+        /* FIN EMAIL */
+      }
       res.status(200).send({ respuesta: "OK", mensaje: "Producto Borrado" });
     } else {
       res.status(403).send({
@@ -290,15 +351,19 @@ productCtrls.uploadThumbnails = async (req, res) => {
         .send({ status: "error", error: "Producto no encontrado" });
     }
 
-    product.thumbnails = product.thumbnails.concat(
-      files.map((file) => file.filename)
-    );
+    files.forEach((file) => {
+      const newImage = {
+        contentType: file.mimetype,
+        name: file.filename,
+      };
+      product.thumbnails.push(newImage);
+    });
 
     await product.save();
 
-    res.send({ status: "success", payload: product });
+    res.status(200).send({ status: "success", payload: product });
   } catch (error) {
-    console.error(error);
+    req.logger.error("Error al subir imagenes:", error);
     res
       .status(500)
       .send({ status: "error", error: "Error interno del servidor" });

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { Schema, model } from "mongoose";
 import { cartModel } from "./carts.models.js";
 import paginate from "mongoose-paginate-v2";
@@ -12,22 +13,6 @@ const documentSchema = new Schema({
     required: true,
   },
 });
-
-function lastConnection() {
-  let time = Date.now();
-
-  const date = new Date(time);
-
-  const year = date.getFullYear();
-  const month = ("0" + (date.getMonth() + 1)).slice(-2);
-  const day = ("0" + date.getDate()).slice(-2);
-  const hours = ("0" + date.getHours()).slice(-2);
-  const minutes = ("0" + date.getMinutes()).slice(-2);
-  const seconds = ("0" + date.getSeconds()).slice(-2);
-
-  const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-  return formattedDate;
-}
 
 const userSchema = new Schema({
   first_name: {
@@ -66,7 +51,8 @@ const userSchema = new Schema({
   },
   documents: [documentSchema],
   last_connection: {
-    type: String,
+    type: Date,
+    default: Date.now(),
   },
   profilePicture: {
     type: String,
@@ -85,9 +71,5 @@ userSchema.pre("save", async function (next) {
     next(error);
   }
 });
-
-userSchema.methods.updateLastConnection = function () {
-  this.last_connection = lastConnection();
-};
 
 export const userModel = model("users", userSchema);

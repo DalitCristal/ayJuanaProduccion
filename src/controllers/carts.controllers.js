@@ -26,8 +26,8 @@ cartsCtrls.getAllCarts = async (req, res) => {
 cartsCtrls.getCartById = async (req, res) => {
   const { id } = req.params;
 
-  // Acceder a la información del usuario autenticado
-  const user = req.user;
+  // Usuario autenticado
+  const user = req.user.user;
 
   try {
     const cart = await cartModel.findById(id);
@@ -50,6 +50,9 @@ cartsCtrls.postAddProd = async (req, res) => {
   const { cid, pid } = req.params;
   const { quantity } = req.body;
 
+  if (!quantity) {
+    return;
+  }
   try {
     const cart = await cartModel.findById(cid);
     if (cart) {
@@ -142,7 +145,7 @@ cartsCtrls.putProds = async (req, res) => {
     const response = await cartModel.findByIdAndUpdate(cid, cart);
 
     res.status(200).send({
-      respuesta: "Se actualizaron productos en el carrito correctamente",
+      respuesta: "Se actualizo cantidad en el carrito correctamente",
       mensaje: response,
     });
   } catch (error) {
@@ -178,7 +181,10 @@ cartsCtrls.putQuantity = async (req, res) => {
         }
 
         const respuesta = await cartModel.findByIdAndUpdate(cid, cart);
-        res.status(200).send({ respuesta: "OK", mensaje: respuesta });
+        res.status(200).send({
+          respuesta: "Se actualizó la cantidad del producto en el carrito",
+          mensaje: respuesta,
+        });
       } else {
         res.status(404).send({
           respuesta: "Error en actualizar cantidad de producto Carrito",
@@ -234,13 +240,13 @@ cartsCtrls.createTicket = async (req, res) => {
 
     let totalAmount = 0;
 
-    // Verifica el stock de cada producto en el carrito
+    // Verificar el stock de cada producto en el carrito
     for (const item of cart.products) {
       const product = item.id_prod;
       const requestedQuantity = item.quantity;
 
       if (product.stock >= requestedQuantity) {
-        // Resta la cantidad del stock del producto
+        // Restar la cantidad del stock del producto
         product.stock -= requestedQuantity;
 
         let productoQueActualizar = await productModel.findById(product._id);
@@ -250,7 +256,7 @@ cartsCtrls.createTicket = async (req, res) => {
           await productoQueActualizar.save();
         } else {
           req.logger.error(
-            "No se encontro el producto que quiere actualizar",
+            "No se encontró el producto que quiere actualizar",
             error
           );
         }
@@ -266,10 +272,13 @@ cartsCtrls.createTicket = async (req, res) => {
       }
     }
 
-    // Crea ticket
+    // Crear ticket
     const newTicket = await Ticket.create({
       amount: totalAmount,
       purchaser: req.user.user.email,
+      payment_mp: "No disponible",
+      status_mp: "No disponible",
+      MerchantOrder_mp: "No disponible",
     });
 
     // Vaciar carrito

@@ -1,21 +1,5 @@
 import mongoose from "mongoose";
 
-function formatTimestamp() {
-  let time = Date.now();
-
-  const date = new Date(time);
-
-  const year = date.getFullYear();
-  const month = ("0" + (date.getMonth() + 1)).slice(-2);
-  const day = ("0" + date.getDate()).slice(-2);
-  const hours = ("0" + date.getHours()).slice(-2);
-  const minutes = ("0" + date.getMinutes()).slice(-2);
-  const seconds = ("0" + date.getSeconds()).slice(-2);
-
-  const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-  return formattedDate;
-}
-
 const ticketSchema = new mongoose.Schema({
   code: {
     type: String,
@@ -28,8 +12,8 @@ const ticketSchema = new mongoose.Schema({
     },
   },
   purchase_datetime: {
-    type: String,
-    default: formatTimestamp(),
+    type: Date,
+    default: Date.now(),
   },
   amount: {
     type: Number,
@@ -39,6 +23,18 @@ const ticketSchema = new mongoose.Schema({
   purchaser: {
     type: String,
     required: true,
+  },
+  payment_mp: {
+    type: String,
+    require: true,
+  },
+  status_mp: {
+    type: String,
+    require: true,
+  },
+  MerchantOrder_mp: {
+    type: String,
+    require: true,
   },
 });
 

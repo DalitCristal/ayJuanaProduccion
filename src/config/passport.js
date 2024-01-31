@@ -37,7 +37,7 @@ const initializePassport = () => {
     )
   );
 
-  //registrarse
+  // Registrarse
   passport.use(
     "register",
     new LocalStrategy(
@@ -82,7 +82,7 @@ const initializePassport = () => {
     )
   );
 
-  //iniciar sesión
+  // Iniciar sesión
   passport.use(
     "login",
     new LocalStrategy(
@@ -113,7 +113,7 @@ const initializePassport = () => {
     )
   );
 
-  //registrarse con github
+  // Registrarse con github
   passport.use(
     "github",
     new GithubStrategy(
@@ -146,12 +146,12 @@ const initializePassport = () => {
     )
   );
 
-  //Inicializar la sesión del usuario
+  // Inicializar la sesión del usuario
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });
 
-  //Eliminar la sesión del usuario
+  // Eliminar la sesión del usuario
   passport.deserializeUser(async (id, done) => {
     const user = await userModel.findById(id);
     done(null, user);

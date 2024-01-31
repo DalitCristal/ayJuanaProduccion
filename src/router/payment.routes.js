@@ -1,25 +1,16 @@
 import { Router } from "express";
 import {
   createOrder,
-  receiveWebhook,
+  createTicket,
+  postEmailPaymentSuccess,
 } from "../controllers/payment.controllers.js";
 
 const paymentRouter = Router();
 
-paymentRouter.post("/create-order", createOrder);
+paymentRouter.post("/api/payment/create-order", createOrder);
 
-paymentRouter.get("/success", (req, res) => {
-  res.send("success");
-});
+paymentRouter.post("/api/payment/success", createTicket);
 
-paymentRouter.get("/failure", (req, res) => {
-  res.send("failure");
-});
-
-paymentRouter.get("/pending", (req, res) => {
-  res.send("pending");
-});
-
-paymentRouter.post("/webhook", receiveWebhook);
+paymentRouter.post("/api/payment/mail", postEmailPaymentSuccess);
 
 export default paymentRouter;

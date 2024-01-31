@@ -6,10 +6,11 @@ import { generateEmailToken } from "../utils/emailToken.js";
 import jwt from "jsonwebtoken";
 import { validateUpdateForm } from "../utils/validateUpdateForm.js";
 import uploader from "../utils/uploader.js";
+import { HOST, PORT_FRONT } from "../config/config.js";
 
 const usersCtrls = {};
 
-//Todos los usuarios
+// Buscar todos los usuarios
 usersCtrls.getApiAllUsers = async (req, res) => {
   try {
     const users = await userModel.find();
@@ -19,7 +20,7 @@ usersCtrls.getApiAllUsers = async (req, res) => {
   }
 };
 
-//Un usuario
+// Buscar un usuario
 usersCtrls.getUserById = async (req, res) => {
   const { id } = req.params;
   const authenticatedUserId = req.user.user._id;
@@ -27,7 +28,7 @@ usersCtrls.getUserById = async (req, res) => {
   try {
     const user = await userModel.findById(id);
     if (user) {
-      if (req.user.user.rol === "admin") {
+      if (req.user.user.rol === "admin" || req.user.user.rol === "premium") {
         res.status(200).send({ respuesta: "OK", mensaje: user });
       } else if (authenticatedUserId.toString() === id.toString()) {
         res.status(200).send({ respuesta: "OK", mensaje: user });
@@ -47,7 +48,7 @@ usersCtrls.getUserById = async (req, res) => {
   }
 };
 
-//verificar email token
+// Verificar email token
 usersCtrls.verifyEmailToken = (req, res) => {
   const token = req.headers.authorization;
   if (!token) {
@@ -60,7 +61,7 @@ usersCtrls.verifyEmailToken = (req, res) => {
         // Token expirado
         return res.status(403).json({ mensaje: "Token expirado" });
       } else {
-        // Otro error en la verificación
+        // Error en la verificación
         req.logger.error("Error en la verificación del token:", err);
         return res.status(403).json({ mensaje: "No autorizado" });
       }
@@ -71,11 +72,13 @@ usersCtrls.verifyEmailToken = (req, res) => {
       if (user.action !== "resetPassword") {
         return res.status(400).json({ mensaje: "Acción no válida" });
       }
+
       // Validar el tiempo de expiración
       const currentTime = Math.floor(Date.now() / 1000);
       if (user.exp && user.exp < currentTime) {
         return res.status(400).json({ mensaje: "Token expirado" });
       }
+
       // Validar que el Id del token sea igual al Id de los query params
       const userIdFromToken = user.userId;
       const userIdFromParams = req.params.userId;
@@ -91,7 +94,7 @@ usersCtrls.verifyEmailToken = (req, res) => {
   });
 };
 
-//Edita contraseña un usuario
+// Editar contraseña
 usersCtrls.putPasswordUser = async (req, res) => {
   const { userId } = req.params;
   const { password } = req.body;
@@ -128,7 +131,7 @@ usersCtrls.putPasswordUser = async (req, res) => {
   }
 };
 
-//Editar todos los campos de usuario
+// Editar todos los campos de usuario
 usersCtrls.putUser = async (req, res) => {
   const { userId } = req.params;
   const authenticatedUserId = req.user.user._id;
@@ -177,7 +180,7 @@ usersCtrls.putUser = async (req, res) => {
   }
 };
 
-//Editar rol de usuario
+// Editar rol de usuario
 usersCtrls.putRolUser = async (req, res) => {
   const { uid } = req.params;
   const { rol } = req.body;
@@ -202,7 +205,71 @@ usersCtrls.putRolUser = async (req, res) => {
   }
 };
 
-//Elimina un usuario
+let transporterDelete = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "dalitcristal25@gmail.com",
+    pass: process.env.CONTRASENA_NODEMAILER,
+    authMethod: "DELETE ACCOUNT",
+  },
+});
+
+usersCtrls.deleteUsers = async (req, res) => {
+  try {
+    // Verificar si se proporcionaron IDs de usuarios
+    const userIds = req.query.userId;
+    if (!userIds || userIds.length === 0) {
+      return res.status(400).json({
+        message: "No se proporcionaron IDs de usuarios para eliminar.",
+      });
+    }
+
+    // Verificar si el usuario tiene permisos
+    if (!req.user.user || req.user.user.rol !== "admin") {
+      return res
+        .status(403)
+        .json({ message: "No tienes permisos para realizar esta acción." });
+    }
+
+    // Buscar los emails antes de que se eliminen las cuentas
+    const users = await userModel.find({ _id: { $in: userIds } });
+    const userEmails = users.map((user) => user.email);
+
+    // Eliminar los usuarios por sus IDs
+    await userModel.deleteMany({
+      _id: { $in: userIds },
+    });
+
+    // Enviar correos electrónicos
+    for (const email of userEmails) {
+      const resultado = await transporterDelete.sendMail({
+        from: "Ay Juana dalitcristal25@gmail.com",
+        to: email,
+        subject: "Cuenta inactiva",
+        html: `
+        <div>
+          <h1>Su cuenta ha sido eliminada por inactividad</h1>
+          <a href='${HOST}${PORT_FRONT}/'>Ay Juana</a>
+        </div>
+      `,
+      });
+
+      req.logger.info("Correo electrónico enviado con éxito:", resultado);
+    }
+
+    res.status(200).send({
+      respuesta: "Usuarios eliminados exitosamente.",
+      mensaje: "Los usuarios ya fueron notificados vía email",
+    });
+  } catch (error) {
+    req.logger.error("Error al eliminar usuarios:", error);
+    res.status(500).json({ message: "Hubo un error al eliminar usuarios." });
+  }
+};
+
+// Eliminar un usuario
 usersCtrls.deleteUser = async (req, res) => {
   const { userId } = req.params;
   try {
@@ -253,7 +320,7 @@ usersCtrls.postMail = async (req, res) => {
         <div>
           <h1>Recuperación de Contraseña</h1>
           <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-          <a href='http://localhost:5173/edit-profile/${userId}'>Restablecer Contraseña</a>
+          <a href='${HOST}${PORT_FRONT}/edit-profile/${userId}'>Restablecer Contraseña</a>
         </div>
       `,
       });
@@ -301,7 +368,7 @@ usersCtrls.userDocument = async (req, res) => {
 
     res.send({ status: "success", payload: user });
   } catch (error) {
-    console.error(error);
+    req.logger.error("Error al subir imagenes:", error);
     res
       .status(500)
       .send({ status: "error", error: "Error interno del servidor" });
@@ -334,7 +401,7 @@ usersCtrls.uploadProfilePicture = async (req, res) => {
 
     res.send({ status: "success", payload: user });
   } catch (error) {
-    console.error(error);
+    req.logger.error("Error al subir imagenes:", error);
     res
       .status(500)
       .send({ status: "error", error: "Error interno del servidor" });
