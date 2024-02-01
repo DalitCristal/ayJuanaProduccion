@@ -2,7 +2,7 @@ import { productModel } from "../models/products.models.js";
 import nodemailer from "nodemailer";
 import "dotenv/config";
 import { userModel } from "../models/users.models.js";
-import { PORT_FRONT, HOST } from "../config/config.js";
+import { HOST_FRONT } from "../config/config.js";
 
 const productCtrls = {};
 
@@ -309,7 +309,7 @@ productCtrls.deleteProduct = async (req, res) => {
           <p>Categoría: ${productToDelete.category}</p>
           <p>Código: ${productToDelete.code}</p>
           <p>Haz click en el siguiente enlace para comunicarte con equipo de asesores.</p>
-          <a href='${HOST}${PORT_FRONT}/'>Quiero más información</a>
+          <a href='${HOST_FRONT}/'>Quiero más información</a>
         </div>
       `,
         };

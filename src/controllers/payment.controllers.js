@@ -3,7 +3,7 @@ import Ticket from "../models/ticket.models.js";
 import "dotenv/config";
 import nodemailer from "nodemailer";
 import { userModel } from "../models/users.models.js";
-import { HOST, PORT_FRONT } from "../config/config.js";
+import { HOST_FRONT } from "../config/config.js";
 
 // Agregar credenciales
 const client = new MercadoPagoConfig({
@@ -30,9 +30,9 @@ export const createOrder = async (req, res) => {
       body: {
         items: items,
         back_urls: {
-          success: `${HOST}${PORT_FRONT}/payment/success`,
-          failure: `${HOST}${PORT_FRONT}/payment/failure`,
-          pending: `${HOST}${PORT_FRONT}/payment/pending`,
+          success: `${HOST_FRONT}/payment/success`,
+          failure: `${HOST_FRONT}/payment/failure`,
+          pending: `${HOST_FRONT}/payment/pending`,
         },
         auto_return: "approved",
       },

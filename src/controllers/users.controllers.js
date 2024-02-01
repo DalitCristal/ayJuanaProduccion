@@ -6,7 +6,7 @@ import { generateEmailToken } from "../utils/emailToken.js";
 import jwt from "jsonwebtoken";
 import { validateUpdateForm } from "../utils/validateUpdateForm.js";
 import uploader from "../utils/uploader.js";
-import { HOST, PORT_FRONT } from "../config/config.js";
+import { HOST_FRONT } from "../config/config.js";
 
 const usersCtrls = {};
 
@@ -251,7 +251,7 @@ usersCtrls.deleteUsers = async (req, res) => {
         html: `
         <div>
           <h1>Su cuenta ha sido eliminada por inactividad</h1>
-          <a href='${HOST}${PORT_FRONT}/'>Ay Juana</a>
+          <a href='${HOST_FRONT}/'>Ay Juana</a>
         </div>
       `,
       });
@@ -320,7 +320,7 @@ usersCtrls.postMail = async (req, res) => {
         <div>
           <h1>Recuperación de Contraseña</h1>
           <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-          <a href='${HOST}${PORT_FRONT}/edit-profile/${userId}'>Restablecer Contraseña</a>
+          <a href='/edit-profile/${userId}'>Restablecer Contraseña</a>
         </div>
       `,
       });
