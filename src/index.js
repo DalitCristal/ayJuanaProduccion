@@ -29,7 +29,7 @@ const swaggerOptions = {
 
 const specs = swaggerJsdoc(swaggerOptions);
 
-const whiteList = ["http://localhost:5173", "https://ayjuana.onrender.com"];
+const whiteList = ["https://loquacious-bienenstitch-2cd3e2.netlify.app"];
 
 const corsOptions = {
   origin: function (origin, callback) {
