@@ -46,7 +46,12 @@ const server = app.listen(PORT_BACK, () => {
 });
 
 //MIDLEWEARE
-app.use(cors()); // Permitir todas las solicitudes CORS, puedes ajustar las opciones según sea necesario
+app.use(
+  cors({
+    origin: "https://ayjuana.netlify.app",
+    credentials: true,
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser(process.env.SIGNED_COOKIE));
