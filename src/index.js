@@ -46,14 +46,16 @@ const server = app.listen(PORT_BACK, () => {
 });
 
 //MIDLEWEARE
-app.use(
-  cors({
-    origin: "https://ayjuana.netlify.app",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://ayjuana.netlify.app");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
