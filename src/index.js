@@ -14,7 +14,7 @@ import MongoStore from "connect-mongo";
 import { addLogger, logger } from "./config/logger.js";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express";
-import { PORT_BACK } from "./config/config.js";
+import { PORT_BACK, HOST_FRONT } from "./config/config.js";
 
 const swaggerOptions = {
   definition: {
@@ -29,7 +29,7 @@ const swaggerOptions = {
 
 const specs = swaggerJsdoc(swaggerOptions);
 
-const whiteList = ["https://demo-ayjuana.onrender.com"];
+const whiteList = [`${HOST_FRONT}`];
 
 const corsOptions = {
   origin: function (origin, callback) {
