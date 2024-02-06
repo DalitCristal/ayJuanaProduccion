@@ -29,6 +29,19 @@ const swaggerOptions = {
 
 const specs = swaggerJsdoc(swaggerOptions);
 
+const whiteList = ["https://ayjuana.netlify.app"];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whiteList.indexOf(origin) != -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Acceso denegado"));
+    }
+  },
+  credentials: true,
+};
+
 //INICIALIZACION
 const app = express();
 
@@ -46,17 +59,7 @@ const server = app.listen(PORT_BACK, () => {
 });
 
 //MIDLEWEARE
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://ayjuana.netlify.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  next();
-});
-
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser(process.env.SIGNED_COOKIE));
@@ -70,6 +73,7 @@ app.use(
       },
       ttl: 60,
     }),
+
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
