@@ -22,7 +22,7 @@ export const passportError = (strategy) => {
 // Recibo roles y establezco su capacidad
 export const authorization = (roles) => {
   return async (req, res, next) => {
-    if (!req.user.user) {
+    if (!req.user) {
       return res.status(401).send({ error: "Usuario no autorizado" });
     }
 
