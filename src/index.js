@@ -29,7 +29,7 @@ const swaggerOptions = {
 
 const specs = swaggerJsdoc(swaggerOptions);
 
-const whiteList = [`${HOST_FRONT}`];
+const whiteList = [`${HOST_FRONT}`, "http://localhost:5173"];
 
 const corsOptions = {
   origin: function (origin, callback) {
