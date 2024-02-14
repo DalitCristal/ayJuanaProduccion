@@ -5,14 +5,75 @@ import { userModel } from "../models/users.models.js";
 import { HOST_FRONT } from "../config/config.js";
 
 const productCtrls = {};
-
 productCtrls.getProducts = async (req, res) => {
   try {
     let { category, status, limit, page, sort } = req.query;
 
     const cat = category;
     const statusProd = status ?? true;
-    const limitProd = limit;
+    const limitProd = limit ?? 12;
+    const pageProd = page ?? 1;
+    const order = sort ?? "asc";
+    let productsFromDB;
+    let productsToShow;
+    let nextPage;
+    let prevPage;
+
+    if (cat == undefined) {
+      productsFromDB = await productModel.paginate(
+        { status: statusProd },
+        { limit: limitProd, page: pageProd, sort: { price: order } }
+      );
+    } else {
+      productsFromDB = await productModel.paginate(
+        { category: cat, status: statusProd },
+        { limit: limitProd, page: pageProd, sort: { price: order } }
+      );
+    }
+
+    productsToShow = productsFromDB.docs.map((prod) => ({
+      title: prod.title,
+      description: prod.description,
+      price: prod.price,
+      stock: prod.stock,
+      category: prod.category,
+      status: prod.status,
+      code: prod.code,
+      thumbnails: prod.thumbnails,
+      id: prod._id.toString(),
+      owner: prod.owner.toString(),
+    }));
+
+    if (!productsFromDB.hasPrevPage && productsFromDB.hasNextPage) {
+      prevPage = 1;
+      nextPage = productsFromDB.nextPage;
+    } else if (productsFromDB.hasPrevPage && productsFromDB.hasNextPage) {
+      prevPage = productsFromDB.prevPage;
+      nextPage = productsFromDB.nextPage;
+    } else if (!productsFromDB.hasNextPage) {
+      nextPage = productsFromDB.totalPages;
+      prevPage = productsFromDB.prevPage;
+    }
+
+    res.status(200).send({
+      respuesta: "OK",
+      mensaje: productsToShow,
+      next: nextPage,
+      prev: prevPage,
+    });
+  } catch (error) {
+    req.logger.error("Error al obtener y procesar los productos:", error);
+    res.status(500).send({ error: "Error interno del servidor" });
+  }
+};
+
+/* productCtrls.getProducts = async (req, res) => {
+  try {
+    let { category, status, limit, page, sort } = req.query;
+
+    const cat = category;
+    const statusProd = status ?? true;
+    const limitProd = limit ?? 12;
     const pageProd = page ?? 1;
     const order = sort ?? "asc";
     let productsFromDB;
@@ -95,7 +156,7 @@ productCtrls.getProducts = async (req, res) => {
     req.logger.error("Error al obtener y procesar los productos:", error);
     res.status(500).send({ error: "Error interno del servidor" });
   }
-};
+}; */
 
 // Buscar producto por Id
 productCtrls.getProductById = async (req, res) => {
