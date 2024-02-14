@@ -10,10 +10,10 @@ productCtrls.getProducts = async (req, res) => {
     let { category, status, limit, page, sort } = req.query;
 
     const cat = category;
-    const statusProd = status ?? true;
-    const limitProd = limit ?? 12;
-    const pageProd = page ?? 1;
-    const order = sort ?? "asc";
+    const statusProd = status;
+    const limitProd = limit;
+    const pageProd = page;
+    const order = sort;
     let productsFromDB;
     let productsToShow;
     let nextPage;
