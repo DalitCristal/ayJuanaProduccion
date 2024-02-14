@@ -12,7 +12,7 @@ productCtrls.getProducts = async (req, res) => {
 
     const cat = category;
     const statusProd = status ?? true;
-    const limitProd = limit ?? 12;
+    const limitProd = limit ?? 8;
     const pageProd = page ?? 1;
     const order = sort ?? "asc";
     let productsFromDB;
