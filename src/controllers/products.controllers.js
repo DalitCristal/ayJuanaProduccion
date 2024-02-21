@@ -5,6 +5,7 @@ import { userModel } from "../models/users.models.js";
 import { HOST_FRONT } from "../config/config.js";
 
 const productCtrls = {};
+
 productCtrls.getProducts = async (req, res) => {
   try {
     let { category, status, limit, page, sort } = req.query;
@@ -44,22 +45,21 @@ productCtrls.getProducts = async (req, res) => {
       owner: prod.owner.toString(),
     }));
 
-    if (!productsFromDB.hasPrevPage && productsFromDB.hasNextPage) {
-      prevPage = 1;
-      nextPage = productsFromDB.nextPage;
-    } else if (productsFromDB.hasPrevPage && productsFromDB.hasNextPage) {
-      prevPage = productsFromDB.prevPage;
-      nextPage = productsFromDB.nextPage;
-    } else if (!productsFromDB.hasNextPage) {
-      nextPage = productsFromDB.totalPages;
-      prevPage = productsFromDB.prevPage;
-    }
+    nextPage = productsFromDB.hasNextPage ? productsFromDB.nextPage : null;
+    prevPage = productsFromDB.hasPrevPage ? productsFromDB.prevPage : null;
 
     res.status(200).send({
       respuesta: "OK",
       mensaje: productsToShow,
       next: nextPage,
       prev: prevPage,
+      totalDocs: productsFromDB.totalDocs,
+      limit: productsFromDB.limit,
+      hasPrevPage: productsFromDB.hasPrevPage,
+      hasNextPage: productsFromDB.hasNextPage,
+      page: productsFromDB.page,
+      totalPages: productsFromDB.totalPages,
+      pagingCounter: productsFromDB.pagingCounter,
     });
   } catch (error) {
     req.logger.error("Error al obtener y procesar los productos:", error);
