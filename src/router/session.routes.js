@@ -22,8 +22,8 @@ sessionRouter.post(
 // Cerrar sesión
 sessionRouter.get(
   "/api/session/logout",
-  passportError("jwt"),
-  authorization(["admin", "premium", "user"]),
+  /* passportError("jwt"),
+  authorization(["admin", "premium", "user"]), */
   sessionsCtrls.getLogOut
 );
 

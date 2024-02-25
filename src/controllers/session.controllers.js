@@ -53,14 +53,14 @@ sessionsCtrls.postSignUp = async (req, res) => {
 sessionsCtrls.getLogOut = async (req, res) => {
   try {
     // Verificar si el usuario está autenticado
-    if (!req.user) {
+    /* if (!req.user) {
       return res.status(401).send({ mensaje: "Usuario no autenticado" });
     }
     const user = await userModel.findById(req.user.user._id);
-
+ */
     // Actualizar last_connection
-    user.last_connection = new Date();
-    await user.save();
+    /*  user.last_connection = new Date();
+    await user.save(); */
 
     // Eliminar la cookie de JWT
     res.clearCookie("jwtCookie");
