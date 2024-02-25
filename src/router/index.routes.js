@@ -15,7 +15,7 @@ router.get("/static", viewsCtrls.renderHome);
 router.get(
   "/static/chat",
   passportError("jwt"),
-  authorization("user"),
+  authorization(["user"]),
   viewsCtrls.renderChat
 );
 

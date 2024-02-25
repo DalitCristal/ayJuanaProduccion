@@ -22,11 +22,32 @@ export const passportError = (strategy) => {
 // Recibo roles y establezco su capacidad
 export const authorization = (roles) => {
   return async (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).send({ error: "Usuario no autorizado" });
-    }
+    try {
+      // Verificar si el usuario está autenticado a través de cookie, headers o user
+      if (
+        req.cookies.jwtCookie ||
+        (req.headers.rol && roles.includes(req.headers.rol)) ||
+        (req.user && roles.includes(req.user.rol))
+      ) {
+        console.log("HEADERS", req.headers);
+        console.log("REQ USER", req.user);
+        console.log("COOKIE", req.cookies.jwtCookie);
 
-    if (!Array.isArray(roles)) {
+        next(); // El usuario tiene permisos, continúa
+      } else {
+        // El usuario no tiene el rol necesario, envia un error de autorización
+
+        return res.status(401).send({ error: "Usuario no autorizado" });
+      }
+    } catch (error) {
+      return res.status(500).send({ error: "Error en el servidor" });
+    }
+  };
+};
+
+/* export const authorization = (roles) => {
+  return async (req, res, next) => {
+     if (!Array.isArray(roles)) {
       roles = [roles];
     }
 
@@ -38,4 +59,4 @@ export const authorization = (roles) => {
 
     next();
   };
-};
+} */

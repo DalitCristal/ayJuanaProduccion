@@ -15,8 +15,8 @@ cartRouter.get(
 
 cartRouter.get(
   "/api/carts/:id",
-  /*  passportError("jwt"),
-  authorization(["admin", "user", "premium"]), */
+  passportError("jwt"),
+  authorization(["admin", "user", "premium"]),
   cartsCtrls.getCartById
 );
 

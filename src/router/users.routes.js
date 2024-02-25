@@ -11,7 +11,7 @@ userRouter.use(addLogger);
 userRouter.get(
   "/api/users",
   passportError("jwt"),
-  authorization("admin"),
+  authorization(["admin"]),
   usersCtrls.getApiAllUsers
 );
 
@@ -41,7 +41,7 @@ userRouter.put(
 userRouter.put(
   `/api/users/premium/:uid`,
   passportError("jwt"),
-  authorization("admin"),
+  authorization(["admin"]),
   usersCtrls.putRolUser
 );
 
@@ -63,7 +63,7 @@ userRouter.delete(
 userRouter.delete(
   "/api/users",
   passportError("jwt"),
-  authorization("admin"),
+  authorization(["admin"]),
   usersCtrls.deleteUsers
 );
 
