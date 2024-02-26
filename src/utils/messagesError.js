@@ -27,12 +27,8 @@ export const authorization = (roles) => {
       if (
         req.cookies.jwtCookie ||
         (req.headers.rol && roles.includes(req.headers.rol)) ||
-        (req.user && roles.includes(req.user.rol))
+        (req.user.user.rol && roles.includes(req.user.user.rol))
       ) {
-        console.log("HEADERS", req.headers);
-        console.log("REQ USER", req.user);
-        console.log("COOKIE", req.cookies.jwtCookie);
-
         next(); // El usuario tiene permisos, continúa
       } else {
         // El usuario no tiene el rol necesario, envia un error de autorización

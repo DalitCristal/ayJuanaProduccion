@@ -28,7 +28,7 @@ cartsCtrls.getCartById = async (req, res) => {
 
   // Usuario autenticado
   const user = req.user;
-  console.log(user);
+  console.log("getCartById", user);
 
   try {
     const cart = await cartModel.findById(id);
