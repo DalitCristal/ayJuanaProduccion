@@ -1,6 +1,4 @@
-import "dotenv/config";
 import passport from "passport";
-import jwt from "jsonwebtoken";
 
 // Funcion para retornar errores en las estrategias de passport
 export const passportError = (strategy) => {
@@ -25,51 +23,26 @@ export const passportError = (strategy) => {
 export const authorization = (roles) => {
   return async (req, res, next) => {
     try {
-      // Verificar si el usuario tiene el rol necesario a través de req.user
-      if (req.user && roles.includes(req.user.rol)) {
+      // Verificar si el usuario está autenticado a través de cookie, headers o user
+      if (
+        req.cookies.jwtCookie ||
+        (req.headers.rol && roles.includes(req.headers.rol)) ||
+        (req.user && roles.includes(req.user.rol))
+      ) {
+        console.log("HEADERS", req.headers);
+        console.log("REQ USER", req.user);
+        console.log("COOKIE", req.cookies.jwtCookie);
+
         next(); // El usuario tiene permisos, continúa
-      }
-      // a través de la cookie jwtCookie
-      else if (
-        req.cookies.jwtCookie &&
-        roles.includes(getUserRolFromToken(req.cookies.jwtCookie))
-      ) {
-        next();
-      }
-      // a través del header Authorization
-      else if (
-        req.headers.authorization &&
-        roles.includes(getUserRolFromToken(req.headers.authorization))
-      ) {
-        next();
-      }
-      // Usuario no autorizado
-      else {
+      } else {
+        // El usuario no tiene el rol necesario, envia un error de autorización
+
         return res.status(401).send({ error: "Usuario no autorizado" });
       }
     } catch (error) {
       return res.status(500).send({ error: "Error en el servidor" });
     }
   };
-};
-
-// Función para obtener el rol del usuario desde el token JWT
-const getUserRolFromToken = (jwtCookie) => {
-  try {
-    // Extraer el token JWT de la cookie
-    const token = jwtCookie.split(" ")[1];
-
-    // Decodificar el token JWT para obtener los datos
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Retornar el rol del usuario desde los datos decodificados
-    console.log("getUserRolFromToken", decodedToken.user.rol);
-    return decodedToken.user.rol;
-  } catch (error) {
-    // Manejar cualquier error que ocurra al decodificar el token JWT
-    console.error("Error al decodificar el token:", error);
-    return null;
-  }
 };
 
 /* export const authorization = (roles) => {
